@@ -1,26 +1,176 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ========================================================
+   Bizarre Japan / Design Tokens
+   Source: bizarre-japan-next/docs/tokens.md §7
+   ======================================================== */
+
+@theme {
+  /* === 原始トーン：墨 (sumi) === */
+  --color-sumi-50:  oklch(0.97 0.008 80);
+  --color-sumi-100: oklch(0.94 0.012 80);
+  --color-sumi-200: oklch(0.88 0.014 78);
+  --color-sumi-300: oklch(0.78 0.014 76);
+  --color-sumi-400: oklch(0.62 0.014 60);
+  --color-sumi-500: oklch(0.45 0.012 50);
+  --color-sumi-600: oklch(0.34 0.012 40);
+  --color-sumi-700: oklch(0.26 0.012 38);
+  --color-sumi-800: oklch(0.20 0.010 36);
+  --color-sumi-900: oklch(0.15 0.010 35);
+  --color-sumi-950: oklch(0.10 0.008 35);
+
+  /* === 原始トーン：朱 (shu) === */
+  --color-shu-50:  oklch(0.96 0.020 30);
+  --color-shu-100: oklch(0.92 0.045 30);
+  --color-shu-200: oklch(0.85 0.085 30);
+  --color-shu-300: oklch(0.75 0.130 30);
+  --color-shu-400: oklch(0.65 0.155 30);
+  --color-shu-500: oklch(0.55 0.170 28);
+  --color-shu-600: oklch(0.48 0.165 26);
+  --color-shu-700: oklch(0.40 0.150 24);
+  --color-shu-800: oklch(0.32 0.120 22);
+  --color-shu-900: oklch(0.24 0.090 22);
+  --color-shu-950: oklch(0.18 0.070 22);
+
+  /* === 原始トーン：鈍金 (kin) === */
+  --color-kin-50:  oklch(0.97 0.015 82);
+  --color-kin-100: oklch(0.93 0.030 82);
+  --color-kin-200: oklch(0.88 0.055 82);
+  --color-kin-300: oklch(0.81 0.078 82);
+  --color-kin-400: oklch(0.74 0.092 82);
+  --color-kin-500: oklch(0.68 0.095 82);
+  --color-kin-600: oklch(0.58 0.090 80);
+  --color-kin-700: oklch(0.48 0.080 78);
+  --color-kin-800: oklch(0.38 0.065 76);
+  --color-kin-900: oklch(0.28 0.050 76);
+  --color-kin-950: oklch(0.20 0.038 76);
+
+  /* === セマンティック（@theme inline で次のブロック）=== */
+
+  /* === フォント === */
+  --font-display: var(--font-display-var), "Shippori Mincho B1", "Noto Serif JP", "Hiragino Mincho ProN", serif;
+  --font-sans:    var(--font-sans-var), "Noto Sans JP", "Hiragino Sans", system-ui, sans-serif;
+  --font-en-display: var(--font-en-display-var), "Cinzel", "Shippori Mincho B1", serif;
+  --font-en-sans: var(--font-en-sans-var), "Inter", "Noto Sans JP", system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", "Noto Sans Mono", ui-monospace, monospace;
+
+  /* === 影 === */
+  --shadow-paper: 0 1px 2px oklch(0 0 0 / 0.06);
+  --shadow-card:  0 2px 8px oklch(0 0 0 / 0.08);
+  --shadow-modal: 0 12px 32px oklch(0 0 0 / 0.18);
+
+  /* === モーション === */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
+/* セマンティックトークンを @theme inline で Tailwind ユーティリティに繋ぐ */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-bg-raised: var(--bg-raised);
+  --color-surface: var(--surface);
+  --color-surface-mute: var(--surface-mute);
+  --color-ink: var(--ink);
+  --color-ink-strong: var(--ink-strong);
+  --color-ink-mute: var(--ink-mute);
+  --color-ink-faint: var(--ink-faint);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-mute: var(--accent-mute);
+  --color-on-accent: var(--on-accent);
+  --color-gold: var(--gold);
+  --color-gold-mute: var(--gold-mute);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-border-paper: var(--border-paper);
+  --color-ring: var(--ring);
+  --color-danger: var(--danger);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* === Light モード（朝の襖） === */
+:root {
+  --bg: var(--color-sumi-50);
+  --bg-raised: var(--color-sumi-100);
+  --surface: var(--color-sumi-100);
+  --surface-mute: var(--color-sumi-200);
+  --ink: var(--color-sumi-900);
+  --ink-strong: var(--color-sumi-950);
+  --ink-mute: var(--color-sumi-600);
+  --ink-faint: var(--color-sumi-400);
+  --accent: var(--color-shu-500);
+  --accent-hover: var(--color-shu-600);
+  --accent-mute: var(--color-shu-200);
+  --on-accent: var(--color-sumi-50);
+  --gold: var(--color-kin-600);
+  --gold-mute: var(--color-kin-300);
+  --border: var(--color-sumi-300);
+  --border-strong: var(--color-sumi-500);
+  --border-paper: oklch(0.82 0.020 80);
+  --ring: var(--color-shu-400);
+  --danger: var(--color-shu-700);
 }
 
+/* === Dark モード（夜の和紙） === */
+[data-theme="dark"] {
+  --bg: var(--color-sumi-900);
+  --bg-raised: var(--color-sumi-800);
+  --surface: var(--color-sumi-800);
+  --surface-mute: var(--color-sumi-700);
+  --ink: var(--color-sumi-100);
+  --ink-strong: var(--color-sumi-50);
+  --ink-mute: var(--color-sumi-300);
+  --ink-faint: var(--color-sumi-500);
+  --accent: var(--color-shu-400);
+  --accent-hover: var(--color-shu-300);
+  --accent-mute: var(--color-shu-900);
+  --on-accent: var(--color-sumi-50);
+  --gold: var(--color-kin-400);
+  --gold-mute: var(--color-kin-700);
+  --border: var(--color-sumi-700);
+  --border-strong: var(--color-sumi-500);
+  --border-paper: oklch(0.30 0.015 35);
+  --ring: var(--color-shu-300);
+  --danger: var(--color-shu-400);
+}
+
+/* === Body ベース === */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  line-height: 1.9;
+  letter-spacing: 0.02em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* === タイポクラス（utility 拡張） === */
+.h-hero {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  line-height: 1.25;
+  letter-spacing: 0.05em;
+  font-weight: 800;
+}
+.h-section {
+  font-family: var(--font-display);
+  font-size: 1.875rem;
+  line-height: 1.3;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+.h-card {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1.4;
+  letter-spacing: 0.03em;
+  font-weight: 600;
+}
+.eyebrow {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  line-height: 1.2;
+  letter-spacing: 0.4em;
+  font-weight: 600;
+  color: var(--gold);
 }
