@@ -1,4 +1,4 @@
-import { IG_POSTS } from "@/lib/data";
+import { IG_POSTS, igImageUrl } from "@/lib/data";
 import { Section } from "@/components/ui/section";
 import { Heading } from "@/components/ui/heading";
 
@@ -48,7 +48,9 @@ export function IgFeed({ lang = "ja" }: { lang?: "ja" | "en" }) {
       <p className="mt-3 text-ink-mute text-sm">{t.sub(t.handle)}</p>
 
       <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-        {posts.map((p) => (
+        {posts.map((p) => {
+          const src = igImageUrl(p);
+          return (
           <a
             key={p.id}
             href={p.permalink}
@@ -56,10 +58,10 @@ export function IgFeed({ lang = "ja" }: { lang?: "ja" | "en" }) {
             rel="noopener"
             className="relative aspect-square bg-bg-raised border border-border overflow-hidden group"
           >
-            {(p.thumbnail_url ?? p.media_url) && (
+            {src && (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={p.thumbnail_url ?? p.media_url}
+                src={src}
                 alt={p.caption?.slice(0, 60) ?? "Instagram post"}
                 className="w-full h-full object-cover transition-transform group-hover:scale-105"
               />
@@ -70,7 +72,8 @@ export function IgFeed({ lang = "ja" }: { lang?: "ja" | "en" }) {
               </div>
             )}
           </a>
-        ))}
+          );
+        })}
       </div>
     </Section>
   );
