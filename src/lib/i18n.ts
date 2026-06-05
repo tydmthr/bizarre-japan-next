@@ -50,6 +50,12 @@ export const DICT = {
       ledeStrong: "日本全国の珍スポット219件と奇祭172件を、地図と暦で巡る。",
       ctaMap: "地図で巡る",
       ctaCalendar: "祭暦を開く",
+      upcoming: {
+        title: "直近の異界 — 巡るべき日々",
+        subThisMonth: (month: number) => `${month}月`,
+        subAhead: "次なる祭礼",
+        empty: "今後の登録奇祭はありません。地図から珍スポットを巡ってみてください。",
+      },
       realmsTitle: "四 つ の 異 界",
       note: [
         "※ 心霊スポット・廃墟は来訪を推奨しません。歴史と来歴の記録として収録しています。",
@@ -138,6 +144,15 @@ export const DICT = {
       ledeStrong: "219 strange spots and 172 wild festivals across Japan, mapped and dated.",
       ctaMap: "Open Map",
       ctaCalendar: "Festival Calendar",
+      upcoming: {
+        title: "Festivals Ahead — Upcoming Rituals",
+        subThisMonth: (month: number) => {
+          const names = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+          return names[month] ?? "";
+        },
+        subAhead: "Festivals Ahead",
+        empty: "No upcoming festivals registered — explore the map instead.",
+      },
       realmsTitle: "F O U R R E A L M S",
       note: [
         "Note: This is a cultural / historical archive. We do not recommend visiting haunted ruins or trespassing on private property.",

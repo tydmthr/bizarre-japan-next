@@ -4,6 +4,7 @@ import { Card, CardEyebrow, CardTitle, CardBody } from "@/components/ui/card";
 import { Heading } from "@/components/ui/heading";
 import { Map, Calendar } from "@/components/icons";
 import { dict, type Lang, langPrefix } from "@/lib/i18n";
+import { UpcomingFestivals } from "./upcoming-festivals";
 
 export function HeroIkai({ lang = "ja" }: { lang?: Lang }) {
   const t = dict(lang);
@@ -104,6 +105,9 @@ export function HeroIkai({ lang = "ja" }: { lang?: Lang }) {
             </Button>
           </Link>
         </div>
+
+        {/* Upcoming Festivals — 直近の異界 */}
+        <UpcomingFestivals lang={lang} />
 
         {/* Categories */}
         <div className="mt-24">
