@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { FESTIVALS } from "@/lib/data";
+import { FESTIVALS, getPrimaryPhotoUrl } from "@/lib/data";
 import {
   getUpcomingFestivals,
   formatYmd,
@@ -81,23 +81,45 @@ export function UpcomingFestivals({ lang = "ja" }: { lang?: Lang }) {
             const showDate = f.date_2026
               ? formatYmd(date)
               : f.date_pattern;
+            const photoUrl = getPrimaryPhotoUrl(f.id);
+            const monthLabel =
+              lang === "en"
+                ? t.hero.upcoming.subThisMonth(date.getMonth() + 1)
+                : `${date.getMonth() + 1}月`;
             return (
               <li key={f.id}>
                 <Link
                   href={`${prefix}/festivals/${f.id}`}
-                  className="group flex items-start gap-4 p-4 bg-bg-raised border border-border hover:border-accent hover:bg-surface transition-colors"
+                  className="group flex items-stretch gap-4 p-3 bg-bg-raised border border-border hover:border-accent hover:bg-surface transition-colors"
                 >
-                  <div className="flex-shrink-0 w-16 text-center border-r border-border pr-4">
-                    <div className="font-display text-2xl font-bold text-accent leading-none">
-                      {date.getDate()}
+                  {photoUrl ? (
+                    <div className="relative flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 overflow-hidden bg-bg">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={photoUrl}
+                        alt={name}
+                        loading="lazy"
+                        className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).style.display = "none";
+                        }}
+                      />
+                      <div className="absolute top-0 left-0 bg-ink/85 text-bg px-1.5 py-0.5 font-display text-xs font-bold leading-none flex items-baseline gap-1">
+                        <span className="text-base">{date.getDate()}</span>
+                        <span className="text-[9px] tracking-widest opacity-80">{monthLabel}</span>
+                      </div>
                     </div>
-                    <div className="mt-1 text-[10px] tracking-widest text-ink-mute uppercase">
-                      {lang === "en"
-                        ? t.hero.upcoming.subThisMonth(date.getMonth() + 1)
-                        : `${date.getMonth() + 1}月`}
+                  ) : (
+                    <div className="flex-shrink-0 w-20 sm:w-24 text-center border-r border-border pr-3 flex flex-col justify-center">
+                      <div className="font-display text-2xl font-bold text-accent leading-none">
+                        {date.getDate()}
+                      </div>
+                      <div className="mt-1 text-[10px] tracking-widest text-ink-mute uppercase">
+                        {monthLabel}
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex-1 min-w-0">
+                  )}
+                  <div className="flex-1 min-w-0 flex flex-col justify-center">
                     <p className="text-[10px] tracking-widest text-ink-mute uppercase">
                       {showDate}
                     </p>
