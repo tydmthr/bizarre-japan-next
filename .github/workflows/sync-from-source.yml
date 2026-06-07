@@ -1,0 +1,75 @@
+name: Sync from source data repo
+
+# 旧リポ tydmthr/kinki-tokai-chinspot（データソース専用）から
+# JSON 6種 + Instagram feed を取り込んで src/data/ にコミットする。
+# 変更があれば deploy.yml を明示的に起動して本番反映する。
+#
+# 旧リポの instagram-feed.yml が毎朝 JST 06:00 に IG feed を更新するので、
+# その1時間後（JST 07:00 = UTC 22:00 前日）に走らせる。
+
+on:
+  schedule:
+    - cron: "0 22 * * *"   # JST 07:00
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write   # gh workflow run deploy.yml のため
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout self
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Clone source repo
+        run: git clone --depth 1 https://github.com/tydmthr/kinki-tokai-chinspot.git ../source
+
+      - name: Sync JSON files
+        run: |
+          set -euo pipefail
+          DEST=src/data
+          mkdir -p "$DEST"
+          for f in spots.json festivals.json spots_en.json festivals_en.json photos.json access_info.json; do
+            if [ -f "../source/$f" ]; then
+              cp "../source/$f" "$DEST/$f"
+              echo "✓ $f"
+            else
+              echo "⚠ $f not found in source"
+            fi
+          done
+          if [ -f ../source/data/instagram-feed.json ]; then
+            jq '.posts' ../source/data/instagram-feed.json > "$DEST/ig_feed.json"
+            COUNT=$(jq 'length' "$DEST/ig_feed.json")
+            echo "✓ ig_feed.json ($COUNT posts)"
+          else
+            echo "⚠ instagram-feed.json not found in source"
+          fi
+
+      - name: Commit and push if changed
+        id: commit
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -z "$(git status --porcelain src/data/)" ]; then
+            echo "No changes to commit."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git add src/data/
+          git diff --cached --stat src/data/
+          git commit -m "chore(data): sync from kinki-tokai-chinspot
+
+Auto-sync via .github/workflows/sync-from-source.yml"
+          git push origin main
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger deploy workflow
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run deploy.yml --ref main
