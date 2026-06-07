@@ -62,9 +62,7 @@ jobs:
           fi
           git add src/data/
           git diff --cached --stat src/data/
-          git commit -m "chore(data): sync from kinki-tokai-chinspot
-
-Auto-sync via .github/workflows/sync-from-source.yml"
+          git commit -m "chore(data): sync from kinki-tokai-chinspot" -m "Auto-sync via .github/workflows/sync-from-source.yml"
           git push origin main
           echo "changed=true" >> "$GITHUB_OUTPUT"
 
