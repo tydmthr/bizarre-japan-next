@@ -90,43 +90,43 @@ export function UpcomingFestivals({ lang = "ja" }: { lang?: Lang }) {
               <li key={f.id}>
                 <Link
                   href={`${prefix}/festivals/${f.id}`}
-                  className="group flex items-stretch gap-4 p-3 bg-bg-raised border border-border hover:border-accent hover:bg-surface transition-colors"
+                  className="group flex flex-col bg-bg-raised border border-border hover:border-accent hover:bg-surface transition-colors h-full"
                 >
                   {photoUrl ? (
-                    <div className="relative flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 overflow-hidden bg-bg">
+                    <div className="relative aspect-[4/3] overflow-hidden bg-bg">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={photoUrl}
                         alt={name}
                         loading="lazy"
-                        className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         onError={(e) => {
                           (e.currentTarget as HTMLImageElement).style.display = "none";
                         }}
                       />
-                      <div className="absolute top-0 left-0 bg-ink/85 text-bg px-1.5 py-0.5 font-display text-xs font-bold leading-none flex items-baseline gap-1">
-                        <span className="text-base">{date.getDate()}</span>
-                        <span className="text-[9px] tracking-widest opacity-80">{monthLabel}</span>
+                      <div className="absolute top-0 left-0 bg-ink/85 text-bg px-2.5 py-1.5 font-display leading-none flex items-baseline gap-1.5">
+                        <span className="text-2xl font-bold">{date.getDate()}</span>
+                        <span className="text-[10px] tracking-widest opacity-80">{monthLabel}</span>
                       </div>
                     </div>
                   ) : (
-                    <div className="flex-shrink-0 w-20 sm:w-24 text-center border-r border-border pr-3 flex flex-col justify-center">
-                      <div className="font-display text-2xl font-bold text-accent leading-none">
+                    <div className="relative aspect-[4/3] flex flex-col items-center justify-center bg-bg border-b border-border">
+                      <div className="font-display text-6xl font-black text-accent leading-none">
                         {date.getDate()}
                       </div>
-                      <div className="mt-1 text-[10px] tracking-widest text-ink-mute uppercase">
+                      <div className="mt-3 text-xs tracking-[0.3em] text-ink-mute uppercase">
                         {monthLabel}
                       </div>
                     </div>
                   )}
-                  <div className="flex-1 min-w-0 flex flex-col justify-center">
+                  <div className="flex-1 p-4">
                     <p className="text-[10px] tracking-widest text-ink-mute uppercase">
                       {showDate}
                     </p>
-                    <h3 className="mt-1 font-display text-base text-ink-strong group-hover:text-accent line-clamp-2">
+                    <h3 className="mt-1 font-display text-base sm:text-lg text-ink-strong group-hover:text-accent line-clamp-2">
                       {name}
                     </h3>
-                    <p className="mt-1 text-xs text-ink-mute">
+                    <p className="mt-2 text-xs text-ink-mute">
                       {place}
                       <span className="mx-2 opacity-50">／</span>
                       {festCatLabel(f.category, lang)}
