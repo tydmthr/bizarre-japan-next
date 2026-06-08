@@ -4,16 +4,23 @@ import { Card, CardEyebrow, CardTitle, CardBody } from "@/components/ui/card";
 import { Heading } from "@/components/ui/heading";
 import { Map, Calendar } from "@/components/icons";
 import { dict, type Lang, langPrefix } from "@/lib/i18n";
+import { SPOTS, FESTIVALS } from "@/lib/data";
 import { UpcomingFestivals } from "./upcoming-festivals";
 
 export function HeroIkai({ lang = "ja" }: { lang?: Lang }) {
   const t = dict(lang);
   const prefix = langPrefix(lang);
 
+  const spotCount = SPOTS.length;
+  const festCount = FESTIVALS.length;
+  const prefCount = new Set(
+    SPOTS.map((s) => s.prefecture).concat(FESTIVALS.map((f) => f.prefecture)),
+  ).size;
+
   const stats = [
-    { num: "219", label: t.hero.statLabels.spots },
-    { num: "172", label: t.hero.statLabels.festivals },
-    { num: "47", label: t.hero.statLabels.prefectures },
+    { num: String(spotCount), label: t.hero.statLabels.spots },
+    { num: String(festCount), label: t.hero.statLabels.festivals },
+    { num: String(prefCount), label: t.hero.statLabels.prefectures },
   ];
 
   const realmTones = ["shu", "neutral", "neutral", "kin"] as const;
@@ -70,7 +77,7 @@ export function HeroIkai({ lang = "ja" }: { lang?: Lang }) {
           <br />
           {t.hero.lede[2]}
           <br />
-          <strong className="text-gold font-bold">{t.hero.ledeStrong}</strong>
+          <strong className="text-gold font-bold">{t.hero.ledeStrong(spotCount, festCount)}</strong>
         </p>
 
         {/* Stats */}

@@ -47,7 +47,8 @@ export const DICT = {
         "しかし確かに其処にある——個人が一生をかけて作り上げたコンクリートの楽園。",
         "千年続く土俗の祭礼。語り継がれた廃墟と祠。",
       ] as const,
-      ledeStrong: "日本全国の珍スポット219件と奇祭172件を、地図と暦で巡る。",
+      ledeStrong: (s: number, f: number) =>
+        `日本全国の珍スポット${s}件と奇祭${f}件を、地図と暦で巡る。`,
       ctaMap: "地図で巡る",
       ctaCalendar: "祭暦を開く",
       upcoming: {
@@ -141,7 +142,8 @@ export const DICT = {
         "But they exist — concrete paradises built by lifelong obsessives.",
         "Folk rituals carrying a thousand years of fire and flesh.",
       ] as const,
-      ledeStrong: "219 strange spots and 172 wild festivals across Japan, mapped and dated.",
+      ledeStrong: (s: number, f: number) =>
+        `${s} strange spots and ${f} wild festivals across Japan, mapped and dated.`,
       ctaMap: "Open Map",
       ctaCalendar: "Festival Calendar",
       upcoming: {

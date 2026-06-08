@@ -1,9 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { FESTIVALS, getPrimaryPhotoUrl } from "@/lib/data";
 import {
+  FESTIVALS,
+  getFestivalEnById,
+  getPrimaryPhotoUrl,
+} from "@/lib/data";
+import {
+  getFestivalsByDateOrder,
   getUpcomingFestivals,
   formatYmd,
 } from "@/lib/calendar";
@@ -124,6 +129,7 @@ function FestivalCard({
   monthLabel,
   lang,
   prefix,
+  sep,
 }: {
   f: (typeof FESTIVALS)[number];
   date: Date;
@@ -134,6 +140,7 @@ function FestivalCard({
   monthLabel: string;
   lang: Lang;
   prefix: string;
+  sep: string;
 }) {
   const [imageError, setImageError] = useState(false);
   const showFallback = !photoUrl || imageError;
@@ -170,7 +177,7 @@ function FestivalCard({
         </h3>
         <p className="mt-2 text-xs text-ink-mute">
           {place}
-          <span className="mx-2 opacity-50">／</span>
+          <span className="mx-2 opacity-50">{sep}</span>
           {festCatLabel(f.category, lang)}
         </p>
       </div>
@@ -182,25 +189,38 @@ export function UpcomingFestivals({ lang = "ja" }: { lang?: Lang }) {
   const t = dict(lang);
   const prefix = langPrefix(lang);
 
-  // SSG/ハイドレーションミスマッチ回避のため、初期は null。
-  // ブラウザマウント後に「今日」基準で計算してセット。
+  // SSR時に描く決定論的な初期リスト（サーバ／クライアントで完全一致）。
+  // クローラ・JS無効でも消えないようにする。
+  const initialList = useMemo(
+    () => getFestivalsByDateOrder(FESTIVALS, 10),
+    [],
+  );
+
+  // マウント後に「今日」をセット。null の間は SSR初期リストを使う。
   const [now, setNow] = useState<Date | null>(null);
   useEffect(() => {
     setNow(new Date());
   }, []);
 
-  if (!now) {
-    // 初回SSRとマウント直後は何も出さない（hydration safe）
-    return null;
-  }
+  // now が入ったらクライアント側で「今日以降10件」に差し替え。
+  const upcoming = useMemo(() => {
+    if (!now) return initialList;
+    return getUpcomingFestivals(FESTIVALS, now, 10);
+  }, [now, initialList]);
 
-  const upcoming = getUpcomingFestivals(FESTIVALS, now, 10);
-  const hasThisMonth = upcoming.some(
-    (x) => x.date.getMonth() === now.getMonth(),
-  );
-  const subtitle = hasThisMonth
-    ? t.hero.upcoming.subThisMonth(now.getMonth() + 1)
-    : t.hero.upcoming.subAhead;
+  // subtitle: SSR/マウント前は固定で "次なる祭礼" / "Festivals Ahead"。
+  // マウント後は今月の祭があれば月ラベル。
+  const subtitle = useMemo(() => {
+    if (!now) return t.hero.upcoming.subAhead;
+    const hasThisMonth = upcoming.some(
+      (x) => x.date.getMonth() === now.getMonth(),
+    );
+    return hasThisMonth
+      ? t.hero.upcoming.subThisMonth(now.getMonth() + 1)
+      : t.hero.upcoming.subAhead;
+  }, [now, upcoming, t]);
+
+  const sep = lang === "en" ? "/" : "／";
 
   return (
     <div className="mt-16 mx-auto max-w-[920px] text-left">
@@ -208,7 +228,9 @@ export function UpcomingFestivals({ lang = "ja" }: { lang?: Lang }) {
         <Heading variant="section" as="h2">
           {t.hero.upcoming.title}
         </Heading>
-        <p className="mt-2 eyebrow">{subtitle}</p>
+        <p className="mt-2 eyebrow" suppressHydrationWarning>
+          {subtitle}
+        </p>
       </div>
 
       {upcoming.length === 0 ? (
@@ -220,7 +242,19 @@ export function UpcomingFestivals({ lang = "ja" }: { lang?: Lang }) {
           {upcoming.map(({ festival: f, date }) => {
             const name =
               lang === "en" && f.name_en ? f.name_en : f.name;
-            const place = `${f.prefecture}${f.city ?? ""}`;
+
+            // EN locale: festivals_en.json の prefecture_en / city_en を使う。
+            // 無ければ漢字フォールバック。
+            let place: string;
+            if (lang === "en") {
+              const fEn = getFestivalEnById(f.id);
+              const pref = fEn?.prefecture_en ?? f.prefecture;
+              const city = fEn?.city_en ?? f.city ?? "";
+              place = city ? `${pref} ${city}` : pref;
+            } else {
+              place = `${f.prefecture}${f.city ?? ""}`;
+            }
+
             const showDate = f.date_2026
               ? formatYmd(date)
               : f.date_pattern;
@@ -241,6 +275,7 @@ export function UpcomingFestivals({ lang = "ja" }: { lang?: Lang }) {
                   monthLabel={monthLabel}
                   lang={lang}
                   prefix={prefix}
+                  sep={sep}
                 />
               </li>
             );

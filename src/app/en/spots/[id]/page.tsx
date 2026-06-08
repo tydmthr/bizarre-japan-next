@@ -13,6 +13,7 @@ import {
   getPhotoFor,
   getAccessFor,
   effectiveDeepDive,
+  getPrimaryPhotoUrl,
   CATEGORY_LABEL_EN,
   type Category,
 } from "@/lib/data";
@@ -31,12 +32,41 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { id } = await params;
   const s = getSpotEnById(id);
-  if (!s) return { title: "Not Found / Bizarre Japan" };
+  if (!s) return { title: "Not Found" };
   const title = s.name_en ?? s.name;
-  const description = s.summary_en ?? s.summary ?? "";
+  const description = (s.summary_en ?? s.summary ?? "").slice(0, 140);
+  const path = `/en/spots/${id}`;
+  const jaPath = `/spots/${id}`;
+  const photoUrl = getPrimaryPhotoUrl(id);
+  const ogImages = photoUrl
+    ? [{ url: photoUrl, width: 1200, height: 900, alt: title }]
+    : [{ url: "/og-image.png", width: 1200, height: 630, alt: title }];
   return {
-    title: `${title} — ${s.prefecture_en ?? s.prefecture} ／ Bizarre Japan`,
-    description: description.slice(0, 140),
+    title,
+    description,
+    alternates: {
+      canonical: path,
+      languages: {
+        ja: jaPath,
+        en: path,
+        "x-default": jaPath,
+      },
+    },
+    openGraph: {
+      type: "article",
+      title,
+      description,
+      url: path,
+      siteName: "Bizarre Japan / 異界巡礼",
+      locale: "en_US",
+      images: ogImages,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ogImages.map((i) => i.url),
+    },
   };
 }
 

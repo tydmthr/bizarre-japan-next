@@ -212,3 +212,31 @@ export function formatYmd(d: Date): string {
   const day = String(d.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
 }
+
+/**
+ * SSR/初期表示用：date_2026（無ければ date_pattern を 2026 で評価）を昇順で limit 件返す。
+ * サーバとクライアントで決定論的に同じ並びになるよう、今日基準ではなく
+ * 「ビルド時の固定リスト」を返す（過去未来問わず）。
+ * マウント後に getUpcomingFestivals(now) に差し替えることで「今日以降」に絞る。
+ */
+export function getFestivalsByDateOrder(
+  festivals: Festival[],
+  limit = 10,
+): Array<{ festival: Festival; date: Date }> {
+  const items: Array<{ festival: Festival; date: Date }> = [];
+
+  for (const f of festivals) {
+    let dt: Date | null = null;
+
+    if (f.date_2026) {
+      dt = parseFestivalDate(f.date_2026);
+    }
+    if (!dt && f.date_pattern) {
+      dt = estimateFestivalDate(f.date_pattern, 2026);
+    }
+    if (dt) items.push({ festival: f, date: dt });
+  }
+
+  items.sort((a, b) => a.date.getTime() - b.date.getTime());
+  return items.slice(0, limit);
+}

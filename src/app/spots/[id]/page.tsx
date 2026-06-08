@@ -13,6 +13,7 @@ import {
   getPhotoFor,
   getAccessFor,
   effectiveDeepDive,
+  getPrimaryPhotoUrl,
   CATEGORY_LABEL_JA,
   type Category,
 } from "@/lib/data";
@@ -34,10 +35,40 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { id } = await params;
   const s = getSpotById(id);
-  if (!s) return { title: "Not Found / Bizarre Japan" };
+  if (!s) return { title: "Not Found" };
+  const description = (s.summary ?? "").slice(0, 140);
+  const path = `/spots/${id}`;
+  const enPath = `/en/spots/${id}`;
+  const photoUrl = getPrimaryPhotoUrl(id);
+  const ogImages = photoUrl
+    ? [{ url: photoUrl, width: 1200, height: 900, alt: s.name }]
+    : [{ url: "/og-image.png", width: 1200, height: 630, alt: s.name }];
   return {
-    title: `${s.name} — ${s.prefecture}${s.city} ／ 異界巡礼`,
-    description: s.summary.slice(0, 140),
+    title: s.name,
+    description,
+    alternates: {
+      canonical: path,
+      languages: {
+        ja: path,
+        en: enPath,
+        "x-default": path,
+      },
+    },
+    openGraph: {
+      type: "article",
+      title: s.name,
+      description,
+      url: path,
+      siteName: "Bizarre Japan / 異界巡礼",
+      locale: "ja_JP",
+      images: ogImages,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: s.name,
+      description,
+      images: ogImages.map((i) => i.url),
+    },
   };
 }
 

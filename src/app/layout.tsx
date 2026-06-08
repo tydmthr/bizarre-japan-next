@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { Shippori_Mincho_B1, Noto_Sans_JP, Cinzel, Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ui/theme-provider";
+import { SPOTS, FESTIVALS } from "@/lib/data";
+
+const SPOT_COUNT = SPOTS.length;
+const FEST_COUNT = FESTIVALS.length;
 
 // フォント最適化: weight を最小化、preload は英文のみ
 const fontDisplay = Shippori_Mincho_B1({
@@ -39,10 +43,9 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default: "Bizarre Japan / 異界巡礼 — 日本全国 珍スポット＆奇祭百景",
-    template: "%s ／ 異界巡礼",
+    template: "%s — Bizarre Japan / 異界巡礼",
   },
-  description:
-    "日本全国の一生記憶に残る珍スポット219件と奇祭172件を、インタラクティブ地図と年間カレンダーで案内する文化アーカイブ。土俗の祭礼、廃墟、聖地、B級カオス。",
+  description: `日本全国の一生記憶に残る珍スポット${SPOT_COUNT}件と奇祭${FEST_COUNT}件を、インタラクティブ地図と年間カレンダーで案内する文化アーカイブ。土俗の祭礼、廃墟、聖地、B級カオス。`,
   keywords: [
     "珍スポット",
     "奇祭",
@@ -65,9 +68,8 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "Bizarre Japan / 異界巡礼",
-    title: "異界巡礼 — 日本全国 珍スポット219＆奇祭172百景",
-    description:
-      "日本全国の珍スポット219件と奇祭172件を、地図と暦で案内する民俗アーカイブ。Strange spots and wild festivals across Japan.",
+    title: `異界巡礼 — 日本全国 珍スポット${SPOT_COUNT}＆奇祭${FEST_COUNT}百景`,
+    description: `日本全国の珍スポット${SPOT_COUNT}件と奇祭${FEST_COUNT}件を、地図と暦で案内する民俗アーカイブ。Strange spots and wild festivals across Japan.`,
     url: SITE_URL,
     images: [
       {
@@ -83,8 +85,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Bizarre Japan / 異界巡礼",
-    description:
-      "219 strange spots and 172 wild festivals across Japan, mapped and dated.",
+    description: `${SPOT_COUNT} strange spots and ${FEST_COUNT} wild festivals across Japan, mapped and dated.`,
     images: ["/og-image.png"],
   },
   alternates: {
