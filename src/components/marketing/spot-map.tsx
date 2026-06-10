@@ -29,12 +29,144 @@ const MAP_STYLE: StyleSpecification = {
   ],
 };
 
-const CAT_COLOR: Record<Category, string> = {
-  folk: "#c8332b",
-  mystery: "#a87d2c",
-  horror: "#2a4d6e",
-  bkyu: "#4a6840",
+/**
+ * カテゴリ別マーカースタイル。
+ *
+ * 美意識方針：朱・金・墨の3色のみ（マット低彩度）＋形状差で4分類。
+ * - folk    = 朱(shu)  ／ 円    祭の灯・血・暖色
+ * - mystery = 鈍金(kin) ／ 菱形  神秘・聖性
+ * - bkyu    = 墨(sumi) ／ 四角  人工物・コンクリ
+ * - horror  = 墨(sumi) ／ 三角  警戒・廃墟
+ *
+ * これにより horror=紺・bkyu=緑 という SaaS 感の逸脱を排除し、
+ * 色覚多様性にも優しい設計に。
+ */
+type MarkerShape = "circle" | "square" | "triangle" | "diamond";
+type MarkerStyle = { color: string; shape: MarkerShape };
+
+const CAT_STYLE: Record<Category, MarkerStyle> = {
+  folk: { color: "#c8332b", shape: "circle" }, // 朱 shu-500
+  mystery: { color: "#a87d2c", shape: "diamond" }, // 鈍金 kin-600
+  bkyu: { color: "#3a2d24", shape: "square" }, // 墨 sumi-700
+  horror: { color: "#1a1411", shape: "triangle" }, // 墨 sumi-900
 };
+
+/** SVG マーカー要素（map ピン用、DOM API で生成） */
+function createMarkerElement(style: MarkerStyle): HTMLElement {
+  const wrap = document.createElement("div");
+  wrap.style.cursor = "pointer";
+  wrap.style.filter = "drop-shadow(0 1px 2px rgba(0,0,0,0.4))";
+  wrap.style.width = "14px";
+  wrap.style.height = "14px";
+  wrap.style.display = "block";
+
+  const svgNs = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNs, "svg");
+  svg.setAttribute("viewBox", "0 0 14 14");
+  svg.setAttribute("width", "14");
+  svg.setAttribute("height", "14");
+  svg.style.display = "block";
+
+  const stroke = "white";
+  const strokeWidth = "1.5";
+
+  if (style.shape === "circle") {
+    const c = document.createElementNS(svgNs, "circle");
+    c.setAttribute("cx", "7");
+    c.setAttribute("cy", "7");
+    c.setAttribute("r", "5.5");
+    c.setAttribute("fill", style.color);
+    c.setAttribute("stroke", stroke);
+    c.setAttribute("stroke-width", strokeWidth);
+    svg.appendChild(c);
+  } else if (style.shape === "square") {
+    const r = document.createElementNS(svgNs, "rect");
+    r.setAttribute("x", "1.75");
+    r.setAttribute("y", "1.75");
+    r.setAttribute("width", "10.5");
+    r.setAttribute("height", "10.5");
+    r.setAttribute("fill", style.color);
+    r.setAttribute("stroke", stroke);
+    r.setAttribute("stroke-width", strokeWidth);
+    svg.appendChild(r);
+  } else if (style.shape === "triangle") {
+    const p = document.createElementNS(svgNs, "polygon");
+    p.setAttribute("points", "7,1.5 12.5,12 1.5,12");
+    p.setAttribute("fill", style.color);
+    p.setAttribute("stroke", stroke);
+    p.setAttribute("stroke-width", strokeWidth);
+    p.setAttribute("stroke-linejoin", "round");
+    svg.appendChild(p);
+  } else {
+    // diamond
+    const p = document.createElementNS(svgNs, "polygon");
+    p.setAttribute("points", "7,1 13,7 7,13 1,7");
+    p.setAttribute("fill", style.color);
+    p.setAttribute("stroke", stroke);
+    p.setAttribute("stroke-width", strokeWidth);
+    p.setAttribute("stroke-linejoin", "round");
+    svg.appendChild(p);
+  }
+
+  wrap.appendChild(svg);
+  return wrap;
+}
+
+/** 凡例用 React SVG（map と認知統一）。サイズ 12px の軽量版 */
+function LegendShape({ color, shape }: MarkerStyle) {
+  const stroke = "white";
+  const strokeWidth = 1.2;
+  return (
+    <svg
+      viewBox="0 0 14 14"
+      width={12}
+      height={12}
+      className="shrink-0"
+      aria-hidden
+      style={{ filter: "drop-shadow(0 1px 1px rgba(0,0,0,0.3))" }}
+    >
+      {shape === "circle" && (
+        <circle
+          cx={7}
+          cy={7}
+          r={5.5}
+          fill={color}
+          stroke={stroke}
+          strokeWidth={strokeWidth}
+        />
+      )}
+      {shape === "square" && (
+        <rect
+          x={1.75}
+          y={1.75}
+          width={10.5}
+          height={10.5}
+          fill={color}
+          stroke={stroke}
+          strokeWidth={strokeWidth}
+        />
+      )}
+      {shape === "triangle" && (
+        <polygon
+          points="7,1.5 12.5,12 1.5,12"
+          fill={color}
+          stroke={stroke}
+          strokeWidth={strokeWidth}
+          strokeLinejoin="round"
+        />
+      )}
+      {shape === "diamond" && (
+        <polygon
+          points="7,1 13,7 7,13 1,7"
+          fill={color}
+          stroke={stroke}
+          strokeWidth={strokeWidth}
+          strokeLinejoin="round"
+        />
+      )}
+    </svg>
+  );
+}
 
 type Item =
   | { type: "spot"; data: Spot }
@@ -120,7 +252,8 @@ export function SpotMap({
     for (const it of visibleItems) {
       const d = it.data;
       const cat = d.category as Category;
-      const color = CAT_COLOR[cat] ?? "#777";
+      const style =
+        CAT_STYLE[cat] ?? ({ color: "#777", shape: "circle" } as MarkerStyle);
       const href =
         it.type === "spot"
           ? `${prefix}/spots/${d.id}`
@@ -134,18 +267,11 @@ export function SpotMap({
           ? `${(d as Spot).prefecture} ${(d as Spot).city}`
           : `${(d as Festival).prefecture} ／ ${(d as Festival).date_2026}`;
 
-      const el = document.createElement("div");
-      el.style.width = "12px";
-      el.style.height = "12px";
-      el.style.borderRadius = "50%";
-      el.style.background = color;
-      el.style.border = "2px solid white";
-      el.style.boxShadow = "0 1px 3px rgba(0,0,0,0.4)";
-      el.style.cursor = "pointer";
+      const el = createMarkerElement(style);
 
       const popupHtml = `
         <div style="font-family: system-ui, sans-serif; padding: 4px 6px;">
-          <div style="font-size: 10px; letter-spacing: 0.2em; color: ${color}; text-transform: uppercase;">${it.type}</div>
+          <div style="font-size: 10px; letter-spacing: 0.2em; color: ${style.color}; text-transform: uppercase;">${it.type}</div>
           <a href="${href}" style="display:block; font-weight:700; color: #1a1411; font-size:13px; margin-top:2px;">${label}</a>
           <div style="font-size: 11px; color: #6a5d54; margin-top: 2px;">${subtitle}</div>
         </div>
@@ -221,9 +347,9 @@ export function SpotMap({
                 onChange={() => toggle(c)}
                 className="accent-accent"
               />
-              <span
-                className="w-2.5 h-2.5 rounded-full shrink-0"
-                style={{ background: CAT_COLOR[c] }}
+              <LegendShape
+                color={CAT_STYLE[c].color}
+                shape={CAT_STYLE[c].shape}
               />
               <span>{labels[c]}</span>
             </label>
