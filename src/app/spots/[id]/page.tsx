@@ -23,6 +23,8 @@ import {
 } from "@/components/content/spot-meta";
 import { DeepDiveBlock } from "@/components/content/deepdive-block";
 import { VisitToggle } from "@/components/ui/visit-toggle";
+import { JsonLd } from "@/components/seo/json-ld";
+import { buildSpotJsonLd } from "@/lib/seo";
 
 export function generateStaticParams() {
   return getAllSpotIds().map((id) => ({ id }));
@@ -84,6 +86,12 @@ export default async function SpotPage({ params }: PageProps) {
 
   return (
     <>
+      <JsonLd
+        data={buildSpotJsonLd(spot, {
+          lang: "ja",
+          photoUrl: photo?.primary,
+        })}
+      />
       <SiteHeader />
 
       <main className="flex-1">

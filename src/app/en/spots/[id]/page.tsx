@@ -20,6 +20,8 @@ import {
 import { DeepDiveBlock } from "@/components/content/deepdive-block";
 import { dict } from "@/lib/i18n";
 import { VisitToggle } from "@/components/ui/visit-toggle";
+import { JsonLd } from "@/components/seo/json-ld";
+import { buildSpotJsonLd } from "@/lib/seo";
 
 export function generateStaticParams() {
   return getAllSpotIds().map((id) => ({ id }));
@@ -111,6 +113,12 @@ export default async function SpotEnPage({ params }: PageProps) {
 
   return (
     <>
+      <JsonLd
+        data={buildSpotJsonLd(spot, {
+          lang: "en",
+          photoUrl: photo?.primary,
+        })}
+      />
       <SiteHeader />
       <main className="flex-1">
         <div className="border-b border-border bg-surface">

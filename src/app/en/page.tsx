@@ -4,6 +4,8 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { HeroIkai } from "@/components/marketing/hero-ikai";
 import { IgFeed } from "@/components/marketing/ig-feed";
 import { SPOTS, FESTIVALS } from "@/lib/data";
+import { JsonLd } from "@/components/seo/json-ld";
+import { buildWebSiteJsonLd } from "@/lib/seo";
 
 const SPOT_COUNT = SPOTS.length;
 const FEST_COUNT = FESTIVALS.length;
@@ -50,6 +52,7 @@ export const metadata: Metadata = {
 export default function HomeEn() {
   return (
     <>
+      <JsonLd data={buildWebSiteJsonLd({ lang: "en" })} />
       <SiteHeader />
       <main className="flex-1">
         <HeroIkai lang="en" />

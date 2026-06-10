@@ -20,6 +20,8 @@ import {
 import { DeepDiveBlock } from "@/components/content/deepdive-block";
 import { dict } from "@/lib/i18n";
 import { VisitToggle } from "@/components/ui/visit-toggle";
+import { JsonLd } from "@/components/seo/json-ld";
+import { buildFestivalJsonLd } from "@/lib/seo";
 
 export function generateStaticParams() {
   return getAllFestivalIds().map((id) => ({ id }));
@@ -86,6 +88,12 @@ export default async function FestivalEnPage({ params }: PageProps) {
 
   return (
     <>
+      <JsonLd
+        data={buildFestivalJsonLd(fest, {
+          lang: "en",
+          photoUrl: photo?.primary,
+        })}
+      />
       <SiteHeader />
       <main className="flex-1">
         <div className="border-b border-border bg-surface">
