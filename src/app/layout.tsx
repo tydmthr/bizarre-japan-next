@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Shippori_Mincho_B1, Noto_Sans_JP, Cinzel, Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ui/theme-provider";
@@ -98,6 +98,13 @@ export const metadata: Metadata = {
   other: {
     "theme-color": "#0e0a08",
   },
+};
+
+// モバイルボトムタブの env(safe-area-inset-bottom) を iOS で効かせるため viewport-fit=cover
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({

@@ -111,6 +111,12 @@ export function SiteFooter() {
           </p>
         </div>
       </div>
+
+      {/* モバイルボトムタブ分の逃げ（fixed バーにコピーライトが隠れないように） */}
+      <div
+        aria-hidden
+        className="h-[calc(3.5rem+env(safe-area-inset-bottom))] md:hidden"
+      />
     </footer>
   );
 }

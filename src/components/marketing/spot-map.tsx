@@ -310,7 +310,7 @@ export function SpotMap({
     setFilters((f) => ({ ...f, [k]: !f[k] }));
 
   return (
-    <div className="relative w-full h-[calc(100vh-4rem)] flex">
+    <div className="relative w-full h-[calc(100dvh-4rem-3.5rem-env(safe-area-inset-bottom))] md:h-[calc(100vh-4rem)] flex">
       <aside className="w-72 hidden md:flex flex-col bg-bg border-r border-border overflow-y-auto p-5 gap-6">
         <div>
           <p className="eyebrow mb-3">L A Y E R</p>
