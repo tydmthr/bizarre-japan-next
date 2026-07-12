@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 const cardVariants = cva(
   [
-    "block border rounded-lg transition-colors",
+    "block border rounded-lg transition-all duration-300",
     "shadow-paper",
   ],
   {
@@ -21,7 +21,7 @@ const cardVariants = cva(
         spacious: "p-8",
       },
       interactive: {
-        true: "hover:border-border-strong hover:shadow-card cursor-pointer",
+        true: "hover:border-border-strong hover:shadow-card hover:-translate-y-0.5 cursor-pointer",
         false: "",
       },
     },

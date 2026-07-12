@@ -174,3 +174,59 @@ body {
   font-weight: 600;
   color: var(--gold);
 }
+
+/* === モーション（2026-07-12 トップ磨き） === */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes drift {
+  0%   { transform: rotate(-15deg) translateX(0); }
+  50%  { transform: rotate(-15deg) translateX(-2.5%); }
+  100% { transform: rotate(-15deg) translateX(0); }
+}
+
+/* 初回ロードの段差出現（inline styleの animation-delay と対で使う） */
+.anim-fade-up {
+  opacity: 0;
+  animation: fade-up 0.9s var(--ease-out) forwards;
+}
+/* 漢字幕のゆらぎ（気配程度） */
+.anim-drift {
+  animation: drift 60s ease-in-out infinite;
+}
+
+/* スクロール出現（ui/reveal.tsx と対） */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 紙の粒（ノイズ）。マット質感の下支え */
+.noise-overlay {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+  opacity: 0.05;
+}
+[data-theme="dark"] .noise-overlay {
+  mix-blend-mode: screen;
+  opacity: 0.04;
+}
+
+/* 動きを抑えたい人にはすべて即時表示 */
+@media (prefers-reduced-motion: reduce) {
+  .anim-fade-up { opacity: 1; animation: none; }
+  .anim-drift { animation: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* 選択色も朱で統一（細部の所作） */
+::selection {
+  background: var(--accent);
+  color: var(--on-accent);
+}
