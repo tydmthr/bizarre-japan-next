@@ -11,6 +11,7 @@ import {
   Path,
 } from "@/components/icons";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { LogoMark } from "@/components/brand/logo-mark";
 import { cn } from "@/lib/utils";
 import { getLangFromPath, langPrefix, altLangHref, dict } from "@/lib/i18n";
 
@@ -56,26 +57,7 @@ export function SiteHeader() {
             href={homePath}
             className="flex items-center gap-3 text-gold shrink-0"
           >
-            <svg
-              viewBox="0 0 60 60"
-              className="w-9 h-9"
-              aria-label="異界巡礼ロゴ"
-            >
-              <circle cx="30" cy="30" r="27" fill="none" stroke="currentColor" strokeWidth="1.2" />
-              <circle cx="30" cy="30" r="20" fill="none" stroke="currentColor" strokeWidth="0.8" />
-              <path d="M 30 8 L 30 52 M 8 30 L 52 30" stroke="currentColor" strokeWidth="0.5" opacity="0.5" />
-              <text
-                x="30"
-                y="38"
-                textAnchor="middle"
-                fontFamily="var(--font-display)"
-                fontSize="20"
-                fontWeight="800"
-                fill="currentColor"
-              >
-                鬼
-              </text>
-            </svg>
+            <LogoMark className="h-8 w-auto" />
             <div className="leading-tight">
               <p className="font-display text-[15px] font-bold tracking-[0.15em] text-ink-strong">
                 {lang === "en" ? "Bizarre Japan" : "異界巡礼"}
