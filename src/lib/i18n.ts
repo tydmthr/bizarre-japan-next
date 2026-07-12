@@ -41,7 +41,7 @@ export const DICT = {
     nophoto: "N O P H O T O",
     hero: {
       eyebrow: "日 本 全 国 ／ 異 界 案 内",
-      title: ["忘れられぬ", "記憶のための、", "もう一つの日本。"] as const,
+      title: ["日本は、", "まだ変だ。", "よかった。"] as const,
       lede: [
         "表通りの観光案内には載らない。",
         "しかし確かに其処にある——個人が一生をかけて作り上げたコンクリートの楽園。",
@@ -136,7 +136,7 @@ export const DICT = {
     nophoto: "N O P H O T O",
     hero: {
       eyebrow: "A C R O S S J A P A N ／ P A R A L L E L J A P A N",
-      title: ["Memories that haunt,", "rituals that defy reason —", "the other Japan."] as const,
+      title: ["Japan is", "still weird.", "Thank god."] as const,
       lede: [
         "You won't find these in a tourist brochure.",
         "But they exist — concrete paradises built by lifelong obsessives.",
