@@ -13,12 +13,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/index-list",
     "/calendar",
     "/map",
-    "/routes",
     "/en",
     "/en/index-list",
     "/en/calendar",
     "/en/map",
-    "/en/routes",
   ];
 
   const spots = getAllSpotIds().flatMap((id) => [

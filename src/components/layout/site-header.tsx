@@ -8,14 +8,13 @@ import {
   Calendar,
   ListMagnifyingGlass,
   House,
-  Path,
 } from "@/components/icons";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LogoMark } from "@/components/brand/logo-mark";
 import { cn } from "@/lib/utils";
 import { getLangFromPath, langPrefix, altLangHref, dict } from "@/lib/i18n";
 
-/** 5タブの定義＋正規化＋active判定（デスクトップ／モバイル共用） */
+/** 4タブの定義＋正規化＋active判定（デスクトップ／モバイル共用） */
 function useNavTabs() {
   const pathname = usePathname() ?? "/";
   const lang = getLangFromPath(pathname);
@@ -32,7 +31,6 @@ function useNavTabs() {
       label: t.nav.list,
       icon: ListMagnifyingGlass,
     },
-    { href: `${prefix}/routes`, label: t.nav.routes, icon: Path },
   ].map((tab) => {
     const normalized = tab.href === `${prefix}/` ? homePath : tab.href;
     const active =
@@ -116,7 +114,7 @@ export function SiteHeader() {
 
 /**
  * モバイル用ボトムタブ（md未満のみ表示）。
- * デスクトップのタブと同じ5項目を流用、回遊動線をスマホでも確保する。
+ * デスクトップのタブと同じ4項目を流用、回遊動線をスマホでも確保する。
  * 引き算設計：背景は bg/95＋blur、active は文字色 gold ＋上辺1pxの金線のみ。
  * iOS ホームバー領域は env(safe-area-inset-bottom) で逃がす（viewport-fit=cover 前提）。
  */
@@ -128,7 +126,7 @@ function MobileTabBar() {
       aria-label={lang === "en" ? "Primary" : "主要ナビゲーション"}
       className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-bg/95 backdrop-blur-md border-t border-border pb-[env(safe-area-inset-bottom)]"
     >
-      <ul className="grid grid-cols-5 h-14">
+      <ul className="grid grid-cols-4 h-14">
         {tabs.map(({ href, label, icon: Icon, active }) => (
           <li key={href} className="relative">
             {active && (
