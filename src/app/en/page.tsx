@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { HeroIkai } from "@/components/marketing/hero-ikai";
-import { IgFeed } from "@/components/marketing/ig-feed";
 import { SPOTS, FESTIVALS } from "@/lib/data";
 import { JsonLd } from "@/components/seo/json-ld";
 import { buildWebSiteJsonLd } from "@/lib/seo";
@@ -56,7 +55,6 @@ export default function HomeEn() {
       <SiteHeader />
       <main className="flex-1">
         <HeroIkai lang="en" />
-        <IgFeed lang="en" />
       </main>
       <SiteFooter />
     </>

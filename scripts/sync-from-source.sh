@@ -20,7 +20,6 @@
 # 動作:
 #   1. 旧リポを git pull --ff-only origin main で最新化
 #   2. 主要 JSON 6種を src/data/ にコピー
-#   3. instagram-feed.json から posts 配列だけを抽出し ig_feed.json として保存
 #   4. git diff src/data/ を表示（最後にユーザーが確認・コミット）
 #
 # このスクリプトは何も commit しない。差分を見て手動で git add → commit してください。
@@ -61,15 +60,6 @@ for f in spots.json festivals.json spots_en.json festivals_en.json photos.json a
   fi
 done
 
-echo
-echo "→ Extracting IG feed (posts only)..."
-if [ -f "$SRC_REPO/data/instagram-feed.json" ]; then
-  jq '.posts' "$SRC_REPO/data/instagram-feed.json" > "$DEST/ig_feed.json"
-  IG_COUNT=$(jq 'length' "$DEST/ig_feed.json")
-  echo "  ✓ ig_feed.json ($IG_COUNT posts)"
-else
-  echo "  ⚠ instagram-feed.json not found in source (skipped)"
-fi
 
 echo
 echo "→ Done. Review changes with:"
